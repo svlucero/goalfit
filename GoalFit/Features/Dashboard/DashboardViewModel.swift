@@ -1,7 +1,7 @@
 import Foundation
 
-/// ViewModel del dashboard: carga los objetivos desde el almacenamiento y calcula
-/// el progreso de cada uno mediante el `ProgressProviding` inyectado.
+/// Dashboard ViewModel: loads goals from storage and computes each one's
+/// progress through the injected `ProgressProviding`.
 @MainActor
 @Observable
 final class DashboardViewModel {
@@ -18,14 +18,14 @@ final class DashboardViewModel {
         self.progressProvider = progressProvider
     }
 
-    /// Cantidad de objetivos completados sobre el total (para el resumen del header).
+    /// Number of completed goals out of the total (for the header summary).
     var completedCount: Int {
         goals.filter { progressByGoal[$0.id]?.isCompleted == true }.count
     }
 
     var isEmpty: Bool { goals.isEmpty }
 
-    /// Carga objetivos activos y su progreso.
+    /// Loads active goals and their progress.
     func load() async {
         isLoading = true
         defer { isLoading = false }
@@ -34,7 +34,7 @@ final class DashboardViewModel {
             goals = fetched
             await recalculateProgress()
         } catch {
-            errorMessage = "No se pudieron cargar los objetivos."
+            errorMessage = "Couldn't load goals."
         }
     }
 
@@ -55,7 +55,7 @@ final class DashboardViewModel {
             try store.delete(goal)
             await load()
         } catch {
-            errorMessage = "No se pudo eliminar el objetivo."
+            errorMessage = "Couldn't delete the goal."
         }
     }
 
@@ -63,7 +63,7 @@ final class DashboardViewModel {
         let toDelete = offsets.map { goals[$0] }
         for goal in toDelete {
             do { try store.delete(goal) }
-            catch { errorMessage = "No se pudo eliminar el objetivo." }
+            catch { errorMessage = "Couldn't delete the goal." }
         }
         await load()
     }

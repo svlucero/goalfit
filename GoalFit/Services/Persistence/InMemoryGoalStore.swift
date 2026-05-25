@@ -1,6 +1,6 @@
 import Foundation
 
-/// Implementación de `GoalStoring` en memoria, para previews y tests sin SwiftData.
+/// In-memory `GoalStoring` implementation, for previews and tests without SwiftData.
 @MainActor
 final class InMemoryGoalStore: GoalStoring {
     private var goals: [Goal]
@@ -28,16 +28,16 @@ final class InMemoryGoalStore: GoalStoring {
         goals.removeAll { $0.id == goal.id }
     }
 
-    func save() throws { /* no-op: las mutaciones ya están en memoria */ }
+    func save() throws { /* no-op: mutations already live in memory */ }
 }
 
 extension InMemoryGoalStore {
-    /// Store con datos de ejemplo para previews.
+    /// Store with sample data for previews.
     static func previewPopulated() -> InMemoryGoalStore {
         InMemoryGoalStore(goals: [
-            Goal(title: "Caminar 10.000 pasos", type: .steps, targetValue: 10000),
-            Goal(title: "30 min de ejercicio", type: .exerciseMinutes, targetValue: 30),
-            Goal(title: "Llegar a 70 kg", type: .bodyMass, targetValue: 70, startValue: 78)
+            Goal(title: "Walk 10,000 steps", type: .steps, targetValue: 10000),
+            Goal(title: "30 min of exercise", type: .exerciseMinutes, targetValue: 30),
+            Goal(title: "Reach 70 kg", type: .bodyMass, targetValue: 70, startValue: 78)
         ])
     }
 }

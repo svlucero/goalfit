@@ -3,9 +3,9 @@ import SwiftData
 
 @main
 struct GoalFitApp: App {
-    /// Contenedor compartido de SwiftData con el esquema de la app.
+    /// Shared SwiftData container with the app schema.
     let modelContainer: ModelContainer
-    /// Contenedor de dependencias.
+    /// Dependency container.
     @State private var container: AppContainer
 
     init() {
@@ -14,7 +14,7 @@ struct GoalFitApp: App {
             self.modelContainer = modelContainer
             _container = State(initialValue: AppContainer(context: modelContainer.mainContext))
         } catch {
-            fatalError("No se pudo crear el ModelContainer: \(error)")
+            fatalError("Could not create the ModelContainer: \(error)")
         }
     }
 

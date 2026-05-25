@@ -1,6 +1,6 @@
 import Foundation
 
-/// ViewModel del formulario de creación/edición de objetivos.
+/// ViewModel for the goal create/edit form.
 @MainActor
 @Observable
 final class GoalFormViewModel {
@@ -54,26 +54,26 @@ final class GoalFormViewModel {
 
     var unit: String { type.defaultUnit }
 
-    /// Indica si el objetivo necesita un valor de partida (metas de peso `reach`).
+    /// Whether the goal needs a start value (weight `reach` goals).
     var requiresStartValue: Bool { type == .bodyMass }
 
-    /// Validación para habilitar el botón Guardar.
+    /// Validation that enables the Save button. A blank title is allowed because
+    /// the suggested title is used in that case.
     var canSave: Bool {
-        let titleOK = !title.trimmingCharacters(in: .whitespaces).isEmpty
         let targetOK = targetValue > 0
         let startOK = !requiresStartValue || startValue > 0
         let deadlineOK = !hasDeadline || deadline > .now
-        return titleOK && targetOK && startOK && deadlineOK
+        return targetOK && startOK && deadlineOK
     }
 
-    /// Título sugerido según el tipo (si el usuario no escribió uno propio).
+    /// Suggested title based on the type (used when the user leaves it blank).
     func suggestedTitle() -> String {
         switch type {
-        case .steps: return "Caminar \(Int(targetValue)) pasos"
-        case .distance: return "Recorrer \(targetValue.formatted()) km"
-        case .activeEnergy: return "Quemar \(Int(targetValue)) kcal"
-        case .exerciseMinutes: return "\(Int(targetValue)) min de ejercicio"
-        case .bodyMass: return "Llegar a \(targetValue.formatted()) kg"
+        case .steps: return "Walk \(Int(targetValue)) steps"
+        case .distance: return "Cover \(targetValue.formatted()) km"
+        case .activeEnergy: return "Burn \(Int(targetValue)) kcal"
+        case .exerciseMinutes: return "\(Int(targetValue)) min of exercise"
+        case .bodyMass: return "Reach \(targetValue.formatted()) kg"
         }
     }
 

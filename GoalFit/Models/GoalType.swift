@@ -1,7 +1,7 @@
 import Foundation
 
-/// Métrica de salud que mide un objetivo. El mapeo concreto a tipos de HealthKit
-/// vive en la capa de servicios para mantener el modelo de dominio puro.
+/// Health metric measured by a goal. The concrete mapping to HealthKit types
+/// lives in the service layer to keep the domain model pure.
 enum GoalType: String, Codable, CaseIterable, Identifiable {
     case steps
     case distance
@@ -11,18 +11,18 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Nombre legible para el usuario.
+    /// Human-readable name shown to the user.
     var displayName: String {
         switch self {
-        case .steps: return "Pasos"
-        case .distance: return "Distancia"
-        case .activeEnergy: return "Calorías activas"
-        case .exerciseMinutes: return "Minutos de ejercicio"
-        case .bodyMass: return "Peso"
+        case .steps: return "Steps"
+        case .distance: return "Distance"
+        case .activeEnergy: return "Active energy"
+        case .exerciseMinutes: return "Exercise minutes"
+        case .bodyMass: return "Weight"
         }
     }
 
-    /// Símbolo de SF Symbols asociado.
+    /// Associated SF Symbol.
     var systemImage: String {
         switch self {
         case .steps: return "figure.walk"
@@ -33,10 +33,10 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Unidad legible por defecto.
+    /// Default human-readable unit.
     var defaultUnit: String {
         switch self {
-        case .steps: return "pasos"
+        case .steps: return "steps"
         case .distance: return "km"
         case .activeEnergy: return "kcal"
         case .exerciseMinutes: return "min"
@@ -44,9 +44,9 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// `true` si el progreso se calcula sumando muestras del período
-    /// (pasos, distancia, calorías, minutos). `false` para métricas de target
-    /// donde interesa el último valor (peso).
+    /// `true` when progress is computed by summing samples over the period
+    /// (steps, distance, calories, minutes). `false` for target metrics where
+    /// the latest value matters (weight).
     var isCumulative: Bool {
         switch self {
         case .steps, .distance, .activeEnergy, .exerciseMinutes: return true
@@ -54,18 +54,18 @@ enum GoalType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Período por defecto sugerido al crear un objetivo de este tipo.
+    /// Default period suggested when creating a goal of this type.
     var defaultPeriod: GoalPeriod {
         isCumulative ? .daily : .target
     }
 
-    /// Dirección por defecto sugerida.
+    /// Default direction suggested.
     var defaultDirection: GoalDirection {
         isCumulative ? .atLeast : .reach
     }
 }
 
-/// Cada cuánto se evalúa el objetivo.
+/// How often the goal is evaluated.
 enum GoalPeriod: String, Codable, CaseIterable, Identifiable {
     case daily
     case weekly
@@ -75,20 +75,20 @@ enum GoalPeriod: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .daily: return "Diario"
-        case .weekly: return "Semanal"
-        case .target: return "Meta única"
+        case .daily: return "Daily"
+        case .weekly: return "Weekly"
+        case .target: return "One-time goal"
         }
     }
 }
 
-/// Cómo se interpreta el cumplimiento de la meta.
+/// How goal completion is interpreted.
 enum GoalDirection: String, Codable, CaseIterable, Identifiable {
-    /// Cumplir = alcanzar o superar (pasos, distancia, etc.).
+    /// Completed = reach or exceed (steps, distance, etc.).
     case atLeast
-    /// Cumplir = mantenerse por debajo.
+    /// Completed = stay below.
     case atMost
-    /// Llegar a un valor objetivo (ej: peso target).
+    /// Reach a target value (e.g. target weight).
     case reach
 
     var id: String { rawValue }

@@ -1,19 +1,19 @@
 import Foundation
 import SwiftData
 
-/// Objetivo de salud definido por el usuario. Se persiste con SwiftData.
+/// Health goal defined by the user. Persisted with SwiftData.
 @Model
 final class Goal {
     @Attribute(.unique) var id: UUID
     var title: String
 
-    /// Persistimos el `rawValue` de los enums para estabilidad del esquema.
+    /// We persist the enums' `rawValue` for schema stability.
     var typeRaw: String
     var periodRaw: String
     var directionRaw: String
 
     var targetValue: Double
-    /// Valor de partida, usado en metas de tipo `reach` (ej: peso inicial).
+    /// Start value, used in `reach` goals (e.g. starting weight).
     var startValue: Double?
     var unit: String
 
@@ -55,7 +55,7 @@ final class Goal {
     }
 }
 
-// MARK: - Acceso tipado a los enums
+// MARK: - Typed access to the enums
 
 extension Goal {
     var type: GoalType {

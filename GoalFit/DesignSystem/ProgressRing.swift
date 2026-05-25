@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Anillo de progreso reutilizable.
+/// Reusable progress ring.
 struct ProgressRing: View {
-    /// Progreso normalizado 0.0–1.0.
+    /// Normalized progress 0.0–1.0.
     var fraction: Double
     var isCompleted: Bool = false
     var lineWidth: CGFloat = 10
@@ -27,7 +27,7 @@ struct ProgressRing: View {
             content
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Progreso \(Int((clamped * 100).rounded())) por ciento"))
+        .accessibilityLabel(Text("Progress \(Int((clamped * 100).rounded())) percent"))
     }
 
     @ViewBuilder

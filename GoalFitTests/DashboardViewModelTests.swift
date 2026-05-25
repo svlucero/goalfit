@@ -48,7 +48,7 @@ final class DashboardViewModelTests: XCTestCase {
 
     func testDeleteRemovesGoal() async throws {
         let store = InMemoryGoalStore()
-        let goal = Goal(title: "Borrar", type: .steps, targetValue: 10000)
+        let goal = Goal(title: "Delete me", type: .steps, targetValue: 10000)
         try store.insert(goal)
         let vm = DashboardViewModel(store: store, progressProvider: MockProgressProvider())
         await vm.load()
@@ -62,13 +62,13 @@ final class DashboardViewModelTests: XCTestCase {
 
     func testOnlyActiveGoalsAreLoaded() async throws {
         let store = InMemoryGoalStore()
-        try store.insert(Goal(title: "Activo", type: .steps, targetValue: 10000, isActive: true))
-        try store.insert(Goal(title: "Archivado", type: .steps, targetValue: 9000, isActive: false))
+        try store.insert(Goal(title: "Active", type: .steps, targetValue: 10000, isActive: true))
+        try store.insert(Goal(title: "Archived", type: .steps, targetValue: 9000, isActive: false))
         let vm = DashboardViewModel(store: store, progressProvider: MockProgressProvider())
 
         await vm.load()
 
         XCTAssertEqual(vm.goals.count, 1)
-        XCTAssertEqual(vm.goals.first?.title, "Activo")
+        XCTAssertEqual(vm.goals.first?.title, "Active")
     }
 }

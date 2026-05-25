@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Tarjeta que resume un objetivo y su progreso en el dashboard.
+/// Card summarizing a goal and its progress on the dashboard.
 struct GoalCard: View {
     let goal: Goal
     let progress: GoalProgress?
@@ -56,7 +56,7 @@ struct GoalCard: View {
 }
 
 #Preview {
-    let goal = Goal(title: "Caminar más", type: .steps, targetValue: 10000)
+    let goal = Goal(title: "Walk more", type: .steps, targetValue: 10000)
     let progress = GoalProgress(
         goalId: goal.id, currentValue: 6200, targetValue: 10000,
         fraction: 0.62, isCompleted: false,
@@ -64,7 +64,7 @@ struct GoalCard: View {
     )
     return VStack(spacing: 12) {
         GoalCard(goal: goal, progress: progress)
-        GoalCard(goal: Goal(title: "Ejercicio", type: .exerciseMinutes, targetValue: 30),
+        GoalCard(goal: Goal(title: "Exercise", type: .exerciseMinutes, targetValue: 30),
                  progress: GoalProgress(goalId: UUID(), currentValue: 30, targetValue: 30,
                                         fraction: 1, isCompleted: true,
                                         periodStart: .now, periodEnd: .now, lastUpdated: .now))

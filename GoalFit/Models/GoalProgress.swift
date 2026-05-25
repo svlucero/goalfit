@@ -1,12 +1,12 @@
 import Foundation
 
-/// Resultado del cálculo de progreso de un objetivo en un período concreto.
-/// Es un valor inmutable producido por `ProgressCalculator`.
+/// Result of computing a goal's progress for a given period.
+/// Immutable value produced by `ProgressCalculator`.
 struct GoalProgress: Equatable, Identifiable {
     let goalId: UUID
     let currentValue: Double
     let targetValue: Double
-    /// Progreso normalizado entre 0.0 y 1.0.
+    /// Normalized progress between 0.0 and 1.0.
     let fraction: Double
     let isCompleted: Bool
     let periodStart: Date
@@ -15,11 +15,11 @@ struct GoalProgress: Equatable, Identifiable {
 
     var id: UUID { goalId }
 
-    /// Progreso en porcentaje entero (0–100).
+    /// Progress as a whole percentage (0–100).
     var percent: Int { Int((fraction * 100).rounded()) }
 }
 
-/// Punto agregado de datos de salud (ej: pasos de un día) para graficar histórico.
+/// Aggregated health data point (e.g. steps for a day) used to chart history.
 struct HealthDataPoint: Equatable, Identifiable {
     let date: Date
     let value: Double

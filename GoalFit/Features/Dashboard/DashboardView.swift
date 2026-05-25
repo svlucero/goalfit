@@ -1,12 +1,11 @@
 import SwiftUI
 
-/// Pantalla principal: lista los objetivos activos con su progreso y permite
-/// crear, editar y eliminar.
+/// Main screen: lists active goals with their progress and allows creating,
+/// editing and deleting them.
 struct DashboardView: View {
     @Environment(AppContainer.self) private var container
     @State private var viewModel: DashboardViewModel?
     @State private var presentedForm: GoalFormRoute?
-    @State private var editingGoal: Goal?
 
     var body: some View {
         NavigationStack {
@@ -25,7 +24,7 @@ struct DashboardView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .accessibilityLabel("Agregar objetivo")
+                    .accessibilityLabel("Add goal")
                 }
             }
             .sheet(item: $presentedForm) { route in
@@ -55,9 +54,9 @@ struct DashboardView: View {
         if viewModel.isEmpty {
             EmptyStateView(
                 systemImage: "target",
-                title: "Sin objetivos todavía",
-                message: "Creá tu primer objetivo para empezar a seguir tu progreso de salud.",
-                actionTitle: "Crear objetivo",
+                title: "No goals yet",
+                message: "Create your first goal to start tracking your health progress.",
+                actionTitle: "Create goal",
                 action: { presentedForm = .create }
             )
         } else {
@@ -87,7 +86,7 @@ struct DashboardView: View {
 
     private func summaryHeader(_ viewModel: DashboardViewModel) -> some View {
         HStack {
-            Text("\(viewModel.completedCount) de \(viewModel.goals.count) objetivos al día")
+            Text("\(viewModel.completedCount) of \(viewModel.goals.count) goals on track")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .textCase(nil)
@@ -97,7 +96,7 @@ struct DashboardView: View {
     }
 }
 
-/// Ruta del formulario modal: crear o editar un objetivo concreto.
+/// Modal form route: create or edit a specific goal.
 enum GoalFormRoute: Identifiable {
     case create
     case edit(Goal)
