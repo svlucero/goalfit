@@ -1,14 +1,14 @@
 import Foundation
 
-/// Provee el progreso de un objetivo. En M1 se usa una implementación simulada;
-/// en M2 se reemplaza por una respaldada en HealthKit sin tocar los ViewModels.
+/// Provides a goal's progress. In M1 a simulated implementation is used; in M2
+/// it is replaced by a HealthKit-backed one without touching the ViewModels.
 protocol ProgressProviding {
     func progress(for goal: Goal) async -> GoalProgress
 }
 
-/// Implementación simulada para desarrollo previo a la integración con HealthKit.
-/// Genera un valor estable por objetivo (derivado de su id) para que el dashboard
-/// se vea "vivo" y determinista.
+/// Simulated implementation for development before the HealthKit integration.
+/// Produces a stable per-goal value (derived from its id) so the dashboard looks
+/// "alive" and deterministic.
 struct MockProgressProvider: ProgressProviding {
     func progress(for goal: Goal) async -> GoalProgress {
         let fraction = Self.stableFraction(for: goal.id)
@@ -30,7 +30,7 @@ struct MockProgressProvider: ProgressProviding {
         )
     }
 
-    /// Fracción pseudo-aleatoria pero estable en [0.15, 1.0] a partir del UUID.
+    /// Pseudo-random but stable fraction in [0.15, 1.0] derived from the UUID.
     static func stableFraction(for id: UUID) -> Double {
         let byte = id.uuid.0
         return 0.15 + (Double(byte) / 255.0) * 0.85

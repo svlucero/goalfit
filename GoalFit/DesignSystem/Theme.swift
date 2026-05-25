@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Tokens de diseño centralizados.
+/// Centralized design tokens.
 enum Theme {
     enum Colors {
         static let accent = Color.accentColor
@@ -23,7 +23,7 @@ enum Theme {
 }
 
 extension Color {
-    /// Color asociado al estado de progreso.
+    /// Color associated with the progress state.
     static func progressColor(fraction: Double, isCompleted: Bool) -> Color {
         if isCompleted { return Theme.Colors.success }
         return Theme.Colors.accent

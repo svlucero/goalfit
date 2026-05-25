@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-/// Implementación de `GoalStoring` sobre SwiftData.
+/// `GoalStoring` implementation backed by SwiftData.
 @MainActor
 final class GoalRepository: GoalStoring {
     private let context: ModelContext

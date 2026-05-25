@@ -28,7 +28,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait"
-        INFOPLIST_KEY_NSHealthShareUsageDescription: "GoalFit lee tus datos de Salud (pasos, distancia, calorías, ejercicio y peso) para calcular el progreso de tus objetivos. Tus datos nunca salen de tu dispositivo."
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "GoalFit reads your Health data (steps, distance, calories, exercise and weight) to calculate the progress of your goals. Your data never leaves your device."
         ENABLE_PREVIEWS: YES
     entitlements:
       path: GoalFit/Resources/GoalFit.entitlements

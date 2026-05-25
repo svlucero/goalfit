@@ -1,10 +1,10 @@
 import Foundation
 
-/// Abstracción de almacenamiento de objetivos. Permite inyectar implementaciones
-/// reales (SwiftData) o mocks en tests/previews.
+/// Storage abstraction for goals. Allows injecting real implementations
+/// (SwiftData) or mocks in tests/previews.
 @MainActor
 protocol GoalStoring {
-    /// Devuelve los objetivos. Si `activeOnly` es true, solo los activos.
+    /// Returns the goals. If `activeOnly` is true, only active ones.
     func fetchGoals(activeOnly: Bool) throws -> [Goal]
     func goal(with id: UUID) throws -> Goal?
     func insert(_ goal: Goal) throws

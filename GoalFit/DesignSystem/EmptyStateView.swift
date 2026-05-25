@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Estado vacío reutilizable con ícono, título, mensaje y acción opcional.
+/// Reusable empty state with icon, title, message and optional action.
 struct EmptyStateView: View {
     let systemImage: String
     let title: String
@@ -37,9 +37,9 @@ struct EmptyStateView: View {
 #Preview {
     EmptyStateView(
         systemImage: "target",
-        title: "Sin objetivos todavía",
-        message: "Creá tu primer objetivo para empezar a seguir tu progreso.",
-        actionTitle: "Crear objetivo",
+        title: "No goals yet",
+        message: "Create your first goal to start tracking your progress.",
+        actionTitle: "Create goal",
         action: {}
     )
 }

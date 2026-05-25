@@ -1,18 +1,17 @@
 import Foundation
 
-/// Calcula el progreso de un objetivo a partir de su definición y un valor
-/// actual leído de HealthKit. Lógica pura, sin estado ni dependencias →
-/// 100% testeable.
+/// Computes a goal's progress from its definition and a current value read from
+/// HealthKit. Pure, stateless logic with no dependencies → fully testable.
 enum ProgressCalculator {
 
-    /// Calcula el progreso de un objetivo.
+    /// Computes a goal's progress.
     /// - Parameters:
-    ///   - goal: el objetivo a evaluar.
-    ///   - currentValue: valor actual de la métrica. Para objetivos acumulativos
-    ///     es la suma del período; para `reach` es la última muestra.
-    ///   - periodStart: inicio del período evaluado.
-    ///   - periodEnd: fin del período evaluado.
-    ///   - now: fecha de cálculo (inyectable para tests).
+    ///   - goal: the goal to evaluate.
+    ///   - currentValue: current metric value. For cumulative goals it is the
+    ///     period sum; for `reach` goals it is the latest sample.
+    ///   - periodStart: start of the evaluated period.
+    ///   - periodEnd: end of the evaluated period.
+    ///   - now: computation date (injectable for tests).
     static func progress(
         for goal: Goal,
         currentValue: Double,
@@ -35,7 +34,7 @@ enum ProgressCalculator {
         )
     }
 
-    /// Fracción de avance normalizada en 0.0–1.0.
+    /// Normalized progress fraction in 0.0–1.0.
     static func fraction(for goal: Goal, currentValue: Double) -> Double {
         switch goal.direction {
         case .atLeast:
@@ -43,14 +42,14 @@ enum ProgressCalculator {
             return clamp(currentValue / goal.targetValue)
 
         case .atMost:
-            // Cuanto más por debajo del límite, mejor. Si lo supera, 0.
+            // The further below the limit, the better. If it exceeds it, 0.
             guard goal.targetValue > 0 else { return 0 }
             if currentValue <= goal.targetValue { return 1 }
-            // Penaliza proporcionalmente el exceso.
+            // Penalize the excess proportionally.
             return clamp(goal.targetValue / currentValue)
 
         case .reach:
-            // Progreso desde el valor de partida hacia el objetivo.
+            // Progress from the start value toward the target.
             guard let start = goal.startValue else {
                 return currentValue == goal.targetValue ? 1 : 0
             }
@@ -61,7 +60,7 @@ enum ProgressCalculator {
         }
     }
 
-    /// Indica si la meta se cumplió.
+    /// Whether the goal has been completed.
     static func isCompleted(for goal: Goal, currentValue: Double) -> Bool {
         switch goal.direction {
         case .atLeast:
@@ -87,8 +86,7 @@ enum ProgressCalculator {
         min(max(value, 0), 1)
     }
 
-    /// Tolerancia para considerar alcanzada una meta de tipo `reach`
-    /// (ej: 0.1 kg para peso).
+    /// Tolerance to consider a `reach` goal achieved (e.g. 0.1 kg for weight).
     private static func reachTolerance(for goal: Goal) -> Double {
         goal.type == .bodyMass ? 0.1 : 0
     }
