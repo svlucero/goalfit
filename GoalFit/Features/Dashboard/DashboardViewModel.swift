@@ -6,16 +6,33 @@ import Foundation
 @Observable
 final class DashboardViewModel {
     private let store: GoalStoring
+    private let healthService: HealthDataProviding
     private let progressProvider: ProgressProviding
 
     private(set) var goals: [Goal] = []
     private(set) var progressByGoal: [UUID: GoalProgress] = [:]
     private(set) var isLoading = false
+    private(set) var didRequestAuthorization = false
     var errorMessage: String?
 
-    init(store: GoalStoring, progressProvider: ProgressProviding) {
+    init(
+        store: GoalStoring,
+        healthService: HealthDataProviding,
+        progressProvider: ProgressProviding
+    ) {
         self.store = store
+        self.healthService = healthService
         self.progressProvider = progressProvider
+    }
+
+    /// Whether health data is available on this device.
+    var isHealthDataAvailable: Bool { healthService.isHealthDataAvailable }
+
+    /// Requests HealthKit read authorization once, for every supported metric.
+    func requestHealthAuthorizationIfNeeded() async {
+        guard !didRequestAuthorization, healthService.isHealthDataAvailable else { return }
+        didRequestAuthorization = true
+        try? await healthService.requestAuthorization(for: GoalType.allCases)
     }
 
     /// Number of completed goals out of the total (for the header summary).

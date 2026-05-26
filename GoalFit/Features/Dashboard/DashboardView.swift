@@ -27,6 +27,13 @@ struct DashboardView: View {
                     .accessibilityLabel("Add goal")
                 }
             }
+            .navigationDestination(for: Goal.self) { goal in
+                GoalDetailView(
+                    viewModel: GoalDetailViewModel(goal: goal, health: container.healthService)
+                ) {
+                    presentedForm = .edit(goal)
+                }
+            }
             .sheet(item: $presentedForm) { route in
                 GoalFormView(
                     viewModel: GoalFormViewModel(
@@ -42,9 +49,11 @@ struct DashboardView: View {
             if viewModel == nil {
                 viewModel = DashboardViewModel(
                     store: container.store,
+                    healthService: container.healthService,
                     progressProvider: container.progressProvider
                 )
             }
+            await viewModel?.requestHealthAuthorizationIfNeeded()
             await viewModel?.load()
         }
     }
@@ -52,23 +61,26 @@ struct DashboardView: View {
     @ViewBuilder
     private func content(_ viewModel: DashboardViewModel) -> some View {
         if viewModel.isEmpty {
-            EmptyStateView(
-                systemImage: "target",
-                title: "No goals yet",
-                message: "Create your first goal to start tracking your health progress.",
-                actionTitle: "Create goal",
-                action: { presentedForm = .create }
-            )
+            VStack {
+                if !viewModel.isHealthDataAvailable { healthBanner }
+                EmptyStateView(
+                    systemImage: "target",
+                    title: "No goals yet",
+                    message: "Create your first goal to start tracking your health progress.",
+                    actionTitle: "Create goal",
+                    action: { presentedForm = .create }
+                )
+            }
         } else {
             List {
+                if !viewModel.isHealthDataAvailable {
+                    Section { healthBanner.listRowInsets(EdgeInsets()) }
+                }
                 Section {
                     ForEach(viewModel.goals) { goal in
-                        Button {
-                            presentedForm = .edit(goal)
-                        } label: {
+                        NavigationLink(value: goal) {
                             GoalCard(goal: goal, progress: viewModel.progress(for: goal))
                         }
-                        .buttonStyle(.plain)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                     }
@@ -82,6 +94,19 @@ struct DashboardView: View {
             .listStyle(.plain)
             .refreshable { await viewModel.load() }
         }
+    }
+
+    private var healthBanner: some View {
+        Label(
+            "Health data isn't available on this device. Progress may not update.",
+            systemImage: "heart.text.square"
+        )
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+        .padding(Theme.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.Colors.warning.opacity(0.12), in: RoundedRectangle(cornerRadius: Theme.Radius.card))
+        .padding(.horizontal, Theme.Spacing.md)
     }
 
     private func summaryHeader(_ viewModel: DashboardViewModel) -> some View {
@@ -119,6 +144,7 @@ enum GoalFormRoute: Identifiable {
 #Preview {
     let container = AppContainer(
         store: InMemoryGoalStore.previewPopulated(),
+        healthService: MockHealthService(),
         progressProvider: MockProgressProvider()
     )
     return DashboardView()
