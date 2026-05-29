@@ -126,21 +126,25 @@ struct GoalFormView: View {
     // MARK: - Actions
 
     private func handleSave() {
-        do {
-            try viewModel.save()
-            onFinish()
-            dismiss()
-        } catch {
-            // In M1 persistence errors are unlikely; ignored for now.
+        Task {
+            do {
+                _ = try await viewModel.save()
+                onFinish()
+                dismiss()
+            } catch {
+                // Persistence errors are unlikely in the MVP; ignored for now.
+            }
         }
     }
 
     private func handleDelete() {
-        do {
-            try viewModel.delete()
-            onFinish()
-            dismiss()
-        } catch {}
+        Task {
+            do {
+                try await viewModel.delete()
+                onFinish()
+                dismiss()
+            } catch {}
+        }
     }
 }
 

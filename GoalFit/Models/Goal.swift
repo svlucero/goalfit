@@ -24,6 +24,11 @@ final class Goal {
     var reminderEnabled: Bool
     var reminderTime: Date?
 
+    /// Period start at which the user was last notified that this goal was
+    /// completed. Used to avoid duplicate completion notifications within the
+    /// same period (or, for target goals, to notify only once).
+    var lastCompletedPeriodStart: Date?
+
     init(
         id: UUID = UUID(),
         title: String,
@@ -37,7 +42,8 @@ final class Goal {
         deadline: Date? = nil,
         isActive: Bool = true,
         reminderEnabled: Bool = false,
-        reminderTime: Date? = nil
+        reminderTime: Date? = nil,
+        lastCompletedPeriodStart: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -52,6 +58,7 @@ final class Goal {
         self.isActive = isActive
         self.reminderEnabled = reminderEnabled
         self.reminderTime = reminderTime
+        self.lastCompletedPeriodStart = lastCompletedPeriodStart
     }
 }
 

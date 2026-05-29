@@ -18,13 +18,19 @@ final class GoalFormViewModel {
     var reminderTime: Date
 
     private let store: GoalStoring
+    private let notifications: NotificationScheduling?
     private let editingGoal: Goal?
 
     var isEditing: Bool { editingGoal != nil }
 
-    init(store: GoalStoring, goal: Goal? = nil) {
+    init(
+        store: GoalStoring,
+        goal: Goal? = nil,
+        notifications: NotificationScheduling? = nil
+    ) {
         self.store = store
         self.editingGoal = goal
+        self.notifications = notifications
 
         if let goal {
             title = goal.title
@@ -77,25 +83,28 @@ final class GoalFormViewModel {
         }
     }
 
-    func save() throws {
+    @discardableResult
+    func save() async throws -> Goal {
         let finalTitle = title.trimmingCharacters(in: .whitespaces).isEmpty
             ? suggestedTitle()
             : title.trimmingCharacters(in: .whitespaces)
 
-        if let goal = editingGoal {
-            goal.title = finalTitle
-            goal.type = type
-            goal.period = period
-            goal.direction = direction
-            goal.targetValue = targetValue
-            goal.startValue = requiresStartValue ? startValue : nil
-            goal.unit = type.defaultUnit
-            goal.deadline = hasDeadline ? deadline : nil
-            goal.reminderEnabled = reminderEnabled
-            goal.reminderTime = reminderEnabled ? reminderTime : nil
+        let goal: Goal
+        if let existing = editingGoal {
+            existing.title = finalTitle
+            existing.type = type
+            existing.period = period
+            existing.direction = direction
+            existing.targetValue = targetValue
+            existing.startValue = requiresStartValue ? startValue : nil
+            existing.unit = type.defaultUnit
+            existing.deadline = hasDeadline ? deadline : nil
+            existing.reminderEnabled = reminderEnabled
+            existing.reminderTime = reminderEnabled ? reminderTime : nil
             try store.save()
+            goal = existing
         } else {
-            let goal = Goal(
+            let new = Goal(
                 title: finalTitle,
                 type: type,
                 period: period,
@@ -106,12 +115,25 @@ final class GoalFormViewModel {
                 reminderEnabled: reminderEnabled,
                 reminderTime: reminderEnabled ? reminderTime : nil
             )
-            try store.insert(goal)
+            try store.insert(new)
+            goal = new
         }
+
+        // Reschedule / cancel the reminder so it always reflects the saved state.
+        if let notifications {
+            if goal.reminderEnabled {
+                await notifications.scheduleDailyReminder(for: goal)
+            } else {
+                await notifications.cancelReminder(for: goal)
+            }
+        }
+
+        return goal
     }
 
-    func delete() throws {
+    func delete() async throws {
         guard let editingGoal else { return }
+        await notifications?.cancelReminder(for: editingGoal)
         try store.delete(editingGoal)
     }
 

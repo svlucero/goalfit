@@ -26,7 +26,8 @@ final class DashboardViewModelTests: XCTestCase {
         let vm = DashboardViewModel(
             store: store,
             healthService: MockHealthService(),
-            progressProvider: StubProgressProvider(completedIds: [goals[0].id])
+            progressProvider: StubProgressProvider(completedIds: [goals[0].id]),
+            notifications: MockNotificationService()
         )
 
         await vm.load()
@@ -41,7 +42,8 @@ final class DashboardViewModelTests: XCTestCase {
         let vm = DashboardViewModel(
             store: InMemoryGoalStore(),
             healthService: MockHealthService(),
-            progressProvider: MockProgressProvider()
+            progressProvider: MockProgressProvider(),
+            notifications: MockNotificationService()
         )
         await vm.load()
         XCTAssertTrue(vm.isEmpty)
@@ -52,7 +54,7 @@ final class DashboardViewModelTests: XCTestCase {
         let store = InMemoryGoalStore()
         let goal = Goal(title: "Delete me", type: .steps, targetValue: 10000)
         try store.insert(goal)
-        let vm = DashboardViewModel(store: store, healthService: MockHealthService(), progressProvider: MockProgressProvider())
+        let vm = DashboardViewModel(store: store, healthService: MockHealthService(), progressProvider: MockProgressProvider(), notifications: MockNotificationService())
         await vm.load()
         XCTAssertEqual(vm.goals.count, 1)
 
@@ -66,7 +68,7 @@ final class DashboardViewModelTests: XCTestCase {
         let store = InMemoryGoalStore()
         try store.insert(Goal(title: "Active", type: .steps, targetValue: 10000, isActive: true))
         try store.insert(Goal(title: "Archived", type: .steps, targetValue: 9000, isActive: false))
-        let vm = DashboardViewModel(store: store, healthService: MockHealthService(), progressProvider: MockProgressProvider())
+        let vm = DashboardViewModel(store: store, healthService: MockHealthService(), progressProvider: MockProgressProvider(), notifications: MockNotificationService())
 
         await vm.load()
 
