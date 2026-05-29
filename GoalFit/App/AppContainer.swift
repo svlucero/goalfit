@@ -7,16 +7,24 @@ import SwiftData
 @Observable
 final class AppContainer {
     let store: GoalStoring
+    let healthService: HealthDataProviding
     let progressProvider: ProgressProviding
 
     init(context: ModelContext) {
+        let health = HealthKitService()
         self.store = GoalRepository(context: context)
-        self.progressProvider = MockProgressProvider()
+        self.healthService = health
+        self.progressProvider = HealthKitProgressProvider(health: health)
     }
 
     /// Initializer to inject arbitrary dependencies (tests/previews).
-    init(store: GoalStoring, progressProvider: ProgressProviding) {
+    init(
+        store: GoalStoring,
+        healthService: HealthDataProviding,
+        progressProvider: ProgressProviding
+    ) {
         self.store = store
+        self.healthService = healthService
         self.progressProvider = progressProvider
     }
 }
