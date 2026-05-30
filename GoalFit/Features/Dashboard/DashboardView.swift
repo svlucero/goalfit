@@ -7,6 +7,7 @@ struct DashboardView: View {
     @Environment(AppContainer.self) private var container
     @State private var viewModel: DashboardViewModel?
     @State private var presentedForm: GoalFormRoute?
+    @State private var presentSettings = false
     @State private var navigationPath = NavigationPath()
 
     var body: some View {
@@ -20,6 +21,14 @@ struct DashboardView: View {
             }
             .navigationTitle("GoalFit")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        presentSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel("Settings")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         presentedForm = .create
@@ -46,6 +55,9 @@ struct DashboardView: View {
                 ) {
                     Task { await viewModel?.load() }
                 }
+            }
+            .sheet(isPresented: $presentSettings) {
+                SettingsView()
             }
         }
         .task {
