@@ -4,14 +4,14 @@ import XCTest
 @MainActor
 final class GoalFormViewModelTests: XCTestCase {
 
-    func testCreateInsertsGoal() throws {
+    func testCreateInsertsGoal() async throws {
         let store = InMemoryGoalStore()
         let vm = GoalFormViewModel(store: store)
         vm.title = "Walk"
         vm.type = .steps
         vm.targetValue = 12000
 
-        try vm.save()
+        try await vm.save()
 
         let goals = try store.fetchGoals()
         XCTAssertEqual(goals.count, 1)
@@ -20,21 +20,21 @@ final class GoalFormViewModelTests: XCTestCase {
         XCTAssertEqual(goals.first?.type, .steps)
     }
 
-    func testEmptyTitleUsesSuggestedTitle() throws {
+    func testEmptyTitleUsesSuggestedTitle() async throws {
         let store = InMemoryGoalStore()
         let vm = GoalFormViewModel(store: store)
         vm.title = "   "
         vm.type = .exerciseMinutes
         vm.targetValue = 30
 
-        try vm.save()
+        try await vm.save()
 
         let goal = try XCTUnwrap(try store.fetchGoals().first)
         XCTAssertFalse(goal.title.isEmpty)
         XCTAssertTrue(goal.title.contains("30"))
     }
 
-    func testEditUpdatesExistingGoal() throws {
+    func testEditUpdatesExistingGoal() async throws {
         let store = InMemoryGoalStore()
         let goal = Goal(title: "Old", type: .steps, targetValue: 8000)
         try store.insert(goal)
@@ -42,7 +42,7 @@ final class GoalFormViewModelTests: XCTestCase {
         let vm = GoalFormViewModel(store: store, goal: goal)
         vm.title = "New"
         vm.targetValue = 15000
-        try vm.save()
+        try await vm.save()
 
         XCTAssertEqual(try store.fetchGoals().count, 1)
         let updated = try XCTUnwrap(try store.goal(with: goal.id))
@@ -50,13 +50,13 @@ final class GoalFormViewModelTests: XCTestCase {
         XCTAssertEqual(updated.targetValue, 15000)
     }
 
-    func testDeleteRemovesGoal() throws {
+    func testDeleteRemovesGoal() async throws {
         let store = InMemoryGoalStore()
         let goal = Goal(title: "Delete me", type: .distance, targetValue: 5)
         try store.insert(goal)
 
         let vm = GoalFormViewModel(store: store, goal: goal)
-        try vm.delete()
+        try await vm.delete()
 
         XCTAssertEqual(try store.fetchGoals().count, 0)
     }
@@ -72,7 +72,7 @@ final class GoalFormViewModelTests: XCTestCase {
 
         vm.targetValue = 10000
         vm.title = ""
-        // título vacío es válido porque se usa el sugerido
+        // an empty title is valid because the suggested title is used instead
         XCTAssertTrue(vm.canSave)
     }
 
@@ -100,14 +100,14 @@ final class GoalFormViewModelTests: XCTestCase {
         XCTAssertEqual(vm.direction, .atLeast)
     }
 
-    func testBodyMassSavesStartValueAndClearsForOthers() throws {
+    func testBodyMassSavesStartValueAndClearsForOthers() async throws {
         let store = InMemoryGoalStore()
         let vm = GoalFormViewModel(store: store)
         vm.type = .bodyMass
         vm.title = "Weight"
         vm.targetValue = 70
         vm.startValue = 80
-        try vm.save()
+        try await vm.save()
 
         let goal = try XCTUnwrap(try store.fetchGoals().first)
         XCTAssertEqual(goal.startValue, 80)
