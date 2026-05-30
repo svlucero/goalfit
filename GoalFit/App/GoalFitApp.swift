@@ -7,6 +7,8 @@ struct GoalFitApp: App {
     let modelContainer: ModelContainer
     /// Dependency container.
     @State private var container: AppContainer
+    /// First-launch flag. Shows `OnboardingView` until set.
+    @AppStorage(OnboardingFlag.key) private var hasCompletedOnboarding = false
 
     init() {
         let modelContainer = Self.makeModelContainer()
@@ -38,8 +40,14 @@ struct GoalFitApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DashboardView()
-                .environment(container)
+            Group {
+                if hasCompletedOnboarding {
+                    DashboardView()
+                } else {
+                    OnboardingView()
+                }
+            }
+            .environment(container)
         }
         .modelContainer(modelContainer)
     }
